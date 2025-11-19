@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockAgents } from "../data/mockData";
+import { mockOffices } from "../data/mockData";
 import type {Agent} from "../data/mockData";
 import {
   Card,
@@ -10,6 +11,7 @@ import {
   Input,
   Modal,
   Typography,
+  Select,
 } from "antd";
 
 import { Plus, Trash2, Mail, Phone, Award, Edit } from "lucide-react";
@@ -26,6 +28,7 @@ export function AdminDashboard() {
   const [newAgent, setNewAgent] = useState({
     name: "",
     email: "",
+    office: "",
     phone: "",
     title: "",
     bio: "",
@@ -38,6 +41,7 @@ export function AdminDashboard() {
     setNewAgent({
       name: "",
       email: "",
+      office: "",
       phone: "",
       title: "",
       bio: "",
@@ -255,100 +259,106 @@ export function AdminDashboard() {
         </Card>
       </div>
 
-      {/* ADD AGENT MODAL */}
-      <Modal
-        title="Add New Agent"
-        open={isAddDialogOpen}
-        onCancel={() => setIsAddDialogOpen(false)}
-        onOk={handleAddAgent}
-        okText="Create Agent"
-        width={700}
+<Modal
+  title="Add New Agent"
+  open={isAddDialogOpen}
+  onCancel={() => setIsAddDialogOpen(false)}
+  onOk={handleAddAgent}
+  okText="Create Agent"
+  width={700}
+>
+  <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
+    <Row gutter={16}>
+      <Col span={12}>
+        <Text>Full Name</Text>
+        <Input
+          placeholder="John Doe"
+          value={newAgent.name}
+          onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+        />
+      </Col>
+
+      <Col span={12}>
+        <Text>Title</Text>
+        <Input
+          placeholder="Real Estate Agent"
+          value={newAgent.title}
+          onChange={(e) => setNewAgent({ ...newAgent, title: e.target.value })}
+        />
+      </Col>
+    </Row>
+
+    <Row gutter={16}>
+      <Col span={12}>
+        <Text>Email</Text>
+        <Input
+          placeholder="john.doe@premierrealty.com"
+          value={newAgent.email}
+          onChange={(e) => setNewAgent({ ...newAgent, email: e.target.value })}
+        />
+      </Col>
+
+      <Col span={12}>
+        <Text>Phone</Text>
+        <Input
+          placeholder="(555) 123-4567"
+          value={newAgent.phone}
+          onChange={(e) => setNewAgent({ ...newAgent, phone: e.target.value })}
+        />
+      </Col>
+    </Row>
+
+    <div>
+      <Text>Office</Text>
+      <Select
+        placeholder="Select an office"
+        style={{ width: "100%" }}
+        value={newAgent.office}
+        onChange={(value) => setNewAgent({ ...newAgent, office: value })}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Text>Full Name</Text>
-              <Input
-                placeholder="John Doe"
-                value={newAgent.name}
-                onChange={(e) =>
-                  setNewAgent({ ...newAgent, name: e.target.value })
-                }
-              />
-            </Col>
+        {mockOffices.map((office) => (
+          <Select.Option key={office.id} value={office.id}>
+            {office.city}
+          </Select.Option>
+        ))}
+      </Select>
+    </div>
 
-            <Col span={12}>
-              <Text>Title</Text>
-              <Input
-                placeholder="Real Estate Agent"
-                value={newAgent.title}
-                onChange={(e) =>
-                  setNewAgent({ ...newAgent, title: e.target.value })
-                }
-              />
-            </Col>
-          </Row>
+    <div>
+      <Text>Years Experience</Text>
+      <Input
+        type="number"
+        placeholder="5"
+        value={newAgent.yearsExperience}
+        onChange={(e) =>
+          setNewAgent({ ...newAgent, yearsExperience: e.target.value })
+        }
+      />
+    </div>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Text>Email</Text>
-              <Input
-                placeholder="john.doe@premierrealty.com"
-                value={newAgent.email}
-                onChange={(e) =>
-                  setNewAgent({ ...newAgent, email: e.target.value })
-                }
-              />
-            </Col>
+    <div>
+      <Text>Specialties (comma-separated)</Text>
+      <Input
+        placeholder="Luxury Homes, Residential"
+        value={newAgent.specialties}
+        onChange={(e) =>
+          setNewAgent({ ...newAgent, specialties: e.target.value })
+        }
+      />
+    </div>
 
-            <Col span={12}>
-              <Text>Phone</Text>
-              <Input
-                placeholder="(555) 123-4567"
-                value={newAgent.phone}
-                onChange={(e) =>
-                  setNewAgent({ ...newAgent, phone: e.target.value })
-                }
-              />
-            </Col>
-          </Row>
+    <div>
+      <Text>Bio</Text>
+      <TextArea
+        rows={4}
+        placeholder="Tell us about this agent..."
+        value={newAgent.bio}
+        onChange={(e) => setNewAgent({ ...newAgent, bio: e.target.value })}
+      />
+    </div>
+  </div>
+</Modal>
 
-          <div>
-            <Text>Years Experience</Text>
-            <Input
-              type="number"
-              placeholder="5"
-              value={newAgent.yearsExperience}
-              onChange={(e) =>
-                setNewAgent({ ...newAgent, yearsExperience: e.target.value })
-              }
-            />
-          </div>
-
-          <div>
-            <Text>Specialties (comma-separated)</Text>
-            <Input
-              placeholder="Luxury Homes, Residential"
-              value={newAgent.specialties}
-              onChange={(e) =>
-                setNewAgent({ ...newAgent, specialties: e.target.value })
-              }
-            />
-          </div>
-
-          <div>
-            <Text>Bio</Text>
-            <TextArea
-              rows={4}
-              placeholder="Tell us about this agent..."
-              value={newAgent.bio}
-              onChange={(e) =>
-                setNewAgent({ ...newAgent, bio: e.target.value })
-              }
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 }

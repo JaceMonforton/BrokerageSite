@@ -9,7 +9,7 @@ import { AgentsDirectory } from './components/AgentsDirectory';
 import { ListingsDirectory } from './components/ListingsDirectory';
 
 import { Layout, Button, Row, Col } from 'antd';
-import { Building2, LayoutDashboard } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 
 const { Header, Content, Footer } = Layout;
 
@@ -60,10 +60,13 @@ function Navigation() {
           {/* Divider */}
           <div style={{ width: 1, height: 24, background: "#d9d9d9", margin: "0 8px" }} />
 
-          <Button type="text" onClick={() => navigate('/admin')}>
-            <LayoutDashboard size={16} style={{ marginRight: 6 }} />
-            Admin
-          </Button>
+    {/* Render only if admin */}
+          {/* {user?.isAdmin && (
+            <Button type="text" onClick={() => navigate("/admin")}>
+              <LayoutDashboard size={16} style={{ marginRight: 6 }} />
+              Admin
+            </Button>
+          )} */}
         </div>
       </Row>
     </Header>

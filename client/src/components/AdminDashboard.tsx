@@ -1,15 +1,25 @@
 import { useState } from "react";
-import type { Agent} from "../data/mockData";
-import {mockAgents } from "../data/mockData"
-import { Card, Button, Input, Modal, Tag } from "antd";
+import { useNavigate } from "react-router-dom";
+import { mockAgents } from "../data/mockData";
+import type {Agent} from "../data/mockData";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Input,
+  Modal,
+  Typography,
+} from "antd";
+
 import { Plus, Trash2, Mail, Phone, Award, Edit } from "lucide-react";
-import { Image } from "antd";
+import { Image} from "antd";
 
-interface AdminDashboardProps {
-  onViewAgent: (agent: Agent) => void;
-}
+const { TextArea } = Input;
+const { Title, Text } = Typography;
 
-export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
+export function AdminDashboard() {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState<Agent[]>(mockAgents);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
@@ -40,73 +50,81 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
     setAgents(agents.filter((agent) => agent.id !== agentId));
   };
 
+  const handleViewAgent = (agent: Agent) => {
+    navigate(`/${agent.extension}`);
+  };
+
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f5f5", padding: "32px 16px" }}>
-      <div style={{ width: '100%', margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "#f5f5f5", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: 32 }}>
-          <h1 style={{ marginBottom: 8 }}>Admin Dashboard</h1>
-          <p style={{ color: "#6b7280" }}>
+          <Title level={2} style={{ marginBottom: 4 }}>
+            Admin Dashboard
+          </Title>
+          <Text type="secondary">
             Manage your brokerage agents and their profiles
-          </p>
+          </Text>
         </div>
 
-        {/* Stats Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: 24,
-            marginBottom: 32,
-          }}
-        >
-          <Card>
-            <h3>Total Agents</h3>
-            <p style={{ color: "#1677ff", fontSize: 24, marginTop: 8 }}>
-              {agents.length}
-            </p>
-          </Card>
+        {/* Stats */}
+        <Row gutter={[24, 24]} style={{ marginBottom: 32 }}>
+          <Col xs={24} md={8}>
+            <Card>
+              <Title level={4}>Total Agents</Title>
+              <Text type="secondary">Active agents in your brokerage</Text>
+              <div style={{ fontSize: 24, color: "#1677ff", marginTop: 12 }}>
+                {agents.length}
+              </div>
+            </Card>
+          </Col>
 
-          <Card>
-            <h3>Total Sales</h3>
-            <p style={{ color: "#1677ff", fontSize: 24, marginTop: 8 }}>
-              {agents.reduce((sum, a) => sum + a.totalSales, 0)}
-            </p>
-          </Card>
+          <Col xs={24} md={8}>
+            <Card>
+              <Title level={4}>Total Sales</Title>
+              <Text type="secondary">Combined sales this year</Text>
+              <div style={{ fontSize: 24, color: "#1677ff", marginTop: 12 }}>
+                {agents.reduce((s, a) => s + a.totalSales, 0)}
+              </div>
+            </Card>
+          </Col>
 
-          <Card>
-            <h3>Avg Experience</h3>
-            <p style={{ color: "#1677ff", fontSize: 20, marginTop: 8 }}>
-              {Math.round(
-                agents.reduce((sum, a) => sum + a.yearsExperience, 0) /
-                  agents.length
-              )}{" "}
-              years
-            </p>
-          </Card>
-        </div>
+          <Col xs={24} md={8}>
+            <Card>
+              <Title level={4}>Avg Experience</Title>
+              <Text type="secondary">Average years of experience</Text>
+              <div style={{ fontSize: 24, color: "#1677ff", marginTop: 12 }}>
+                {Math.round(
+                  agents.reduce((s, a) => s + a.yearsExperience, 0) / agents.length
+                )}{" "}
+                years
+              </div>
+            </Card>
+          </Col>
+        </Row>
 
-        {/* Manage Agents */}
+        {/* Main Agent Management Card */}
         <Card>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 24,
+              marginBottom: 16,
             }}
           >
             <div>
-              <h2 style={{ marginBottom: 4 }}>Manage Agents</h2>
-              <p style={{ color: "#6b7280" }}>
+              <Title level={4} style={{ marginBottom: 4 }}>
+                Manage Agents
+              </Title>
+              <Text type="secondary">
                 Add, edit, or remove agents from your brokerage
-              </p>
+              </Text>
             </div>
 
             <Button
               type="primary"
+              icon={<Plus size={16} />}
               onClick={() => setIsAddDialogOpen(true)}
-              icon={<Plus size={16} style={{ marginRight: 6 }} />}
             >
               Add Agent
             </Button>
@@ -118,15 +136,15 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
               <div
                 key={agent.id}
                 style={{
-                  padding: 16,
-                  border: "1px solid #e5e7eb",
-                  borderRadius: 8,
                   display: "flex",
                   gap: 16,
-                  alignItems: "center",
+                  padding: 16,
+                  border: "1px solid #e5e5e5",
+                  borderRadius: 8,
                   background: "#fff",
                 }}
               >
+                {/* Avatar */}
                 <div
                   style={{
                     width: 64,
@@ -139,35 +157,40 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
                   <Image
                     src={agent.photo}
                     alt={agent.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
 
-                {/* Agent Info */}
-                <div style={{ flex: 1 }}>
+                {/* Details */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems: "flex-start",
                       marginBottom: 8,
                     }}
                   >
                     <div>
-                      <h3 style={{ marginBottom: 4 }}>{agent.name}</h3>
-                      <p style={{ color: "#6b7280", fontSize: 14 }}>{agent.title}</p>
+                      <Title level={5} style={{ marginBottom: 4 }}>
+                        {agent.name}
+                      </Title>
+                      <Text type="secondary">{agent.title}</Text>
                     </div>
 
                     <div style={{ display: "flex", gap: 8 }}>
                       <Button
                         size="small"
-                        onClick={() => onViewAgent(agent)}
+                        onClick={() => handleViewAgent(agent)}
                         icon={<Edit size={14} />}
                       />
 
                       <Button
-                        danger
                         size="small"
+                        danger
                         onClick={() => handleDeleteAgent(agent.id)}
                         icon={<Trash2 size={14} />}
                       />
@@ -176,45 +199,55 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
 
                   {/* Specialties */}
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-                    {agent.specialties.map((s) => (
-                      <Tag key={s} color="blue">
-                        {s}
-                      </Tag>
+                    {agent.specialties.map((spec) => (
+                      <span
+                        key={spec}
+                        style={{
+                          padding: "4px 8px",
+                          background: "#f0f0f0",
+                          borderRadius: 4,
+                          fontSize: 12,
+                        }}
+                      >
+                        {spec}
+                      </span>
                     ))}
                   </div>
 
-                  {/* Contact */}
+                  {/* Contact Info */}
                   <div
                     style={{
                       display: "flex",
                       flexWrap: "wrap",
                       gap: 16,
-                      color: "#6b7280",
                       fontSize: 14,
+                      color: "#888",
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <Mail size={14} />
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <Mail size={16} />
                       {agent.email}
-                    </div>
+                    </span>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <Phone size={14} />
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <Phone size={16} />
                       {agent.phone}
-                    </div>
+                    </span>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <Award size={14} />
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <Award size={16} />
                       {agent.yearsExperience} years | {agent.totalSales} sales
-                    </div>
+                    </span>
                   </div>
 
-                  <p style={{ marginTop: 8, color: "#6b7280", fontSize: 14 }}>
-                    Extension:{" "}
-                    <span style={{ color: "#1677ff", fontFamily: "monospace" }}>
-                      premierrealty.com/{agent.extension}
-                    </span>
-                  </p>
+                  <div style={{ marginTop: 8 }}>
+                    <Text type="secondary" style={{ fontSize: 13 }}>
+                      Extension URL:{" "}
+                      <span style={{ color: "#1677ff", fontFamily: "monospace" }}>
+                        premierrealty.com/{agent.extension}
+                      </span>
+                    </Text>
+                  </div>
                 </div>
               </div>
             ))}
@@ -228,13 +261,13 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
         open={isAddDialogOpen}
         onCancel={() => setIsAddDialogOpen(false)}
         onOk={handleAddAgent}
-        okText="Create Agent Profile"
-        width={600}
+        okText="Create Agent"
+        width={700}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <div>
-              <label>Full Name</label>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Text>Full Name</Text>
               <Input
                 placeholder="John Doe"
                 value={newAgent.name}
@@ -242,10 +275,10 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
                   setNewAgent({ ...newAgent, name: e.target.value })
                 }
               />
-            </div>
+            </Col>
 
-            <div>
-              <label>Title</label>
+            <Col span={12}>
+              <Text>Title</Text>
               <Input
                 placeholder="Real Estate Agent"
                 value={newAgent.title}
@@ -253,24 +286,23 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
                   setNewAgent({ ...newAgent, title: e.target.value })
                 }
               />
-            </div>
-          </div>
+            </Col>
+          </Row>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <div>
-              <label>Email</label>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Text>Email</Text>
               <Input
-                type="email"
-                placeholder="example@premier.com"
+                placeholder="john.doe@premierrealty.com"
                 value={newAgent.email}
                 onChange={(e) =>
                   setNewAgent({ ...newAgent, email: e.target.value })
                 }
               />
-            </div>
+            </Col>
 
-            <div>
-              <label>Phone</label>
+            <Col span={12}>
+              <Text>Phone</Text>
               <Input
                 placeholder="(555) 123-4567"
                 value={newAgent.phone}
@@ -278,11 +310,11 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
                   setNewAgent({ ...newAgent, phone: e.target.value })
                 }
               />
-            </div>
-          </div>
+            </Col>
+          </Row>
 
           <div>
-            <label>Years of Experience</label>
+            <Text>Years Experience</Text>
             <Input
               type="number"
               placeholder="5"
@@ -294,7 +326,7 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
           </div>
 
           <div>
-            <label>Specialties (comma-separated)</label>
+            <Text>Specialties (comma-separated)</Text>
             <Input
               placeholder="Luxury Homes, Residential"
               value={newAgent.specialties}
@@ -305,8 +337,8 @@ export function AdminDashboard({ onViewAgent }: AdminDashboardProps) {
           </div>
 
           <div>
-            <label>Bio</label>
-            <Input.TextArea
+            <Text>Bio</Text>
+            <TextArea
               rows={4}
               placeholder="Tell us about this agent..."
               value={newAgent.bio}

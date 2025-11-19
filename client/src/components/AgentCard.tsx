@@ -1,7 +1,8 @@
-import type { Agent } from '../data/mockData';
-import { Card, Button, Tag } from 'antd';
-import { Mail, Phone, Award } from 'lucide-react';
-import { Image } from 'antd';
+import type { Agent } from "../data/mockData";
+import { useNavigate } from "react-router-dom";
+import { Card, Button, Tag } from "antd";
+import { Mail, Phone, Award } from "lucide-react";
+import { Image } from "antd";
 
 interface AgentCardProps {
   agent: Agent;
@@ -9,31 +10,40 @@ interface AgentCardProps {
 }
 
 export function AgentCard({ agent, onViewProfile }: AgentCardProps) {
+  const navigate = useNavigate();
+
+  const handleViewProfile = () => {
+    if (onViewProfile) {
+      onViewProfile(agent);
+    } else {
+      navigate(`/${agent.extension}`);
+    }
+  };
+
   return (
     <Card
       hoverable
       style={{
-        width: '100%',
         borderRadius: 12,
-        transition: 'box-shadow 0.2s ease',
+        transition: "box-shadow 0.2s",
       }}
       bodyStyle={{ padding: 24 }}
     >
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
+          display: "flex",
+          flexDirection: "column",
+          textAlign: "center",
+          alignItems: "center",
         }}
       >
-        {/* Profile Image */}
+        {/* Avatar */}
         <div
           style={{
             width: 128,
             height: 128,
-            borderRadius: '50%',
-            overflow: 'hidden',
+            borderRadius: "50%",
+            overflow: "hidden",
             marginBottom: 16,
           }}
         >
@@ -41,70 +51,62 @@ export function AgentCard({ agent, onViewProfile }: AgentCardProps) {
             src={agent.photo}
             alt={agent.name}
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
             }}
           />
         </div>
 
-        {/* Name + Title */}
-        <h3 style={{ marginBottom: 4 }}>{agent.name}</h3>
-        <p style={{ color: '#888', marginBottom: 16 }}>{agent.title}</p>
+        {/* Name */}
+        <h3 style={{ marginBottom: 4, fontWeight: 600 }}>{agent.name}</h3>
+        <p style={{ color: "#888", marginBottom: 16 }}>{agent.title}</p>
 
         {/* Specialties */}
         <div
           style={{
-            display: 'flex',
+            display: "flex",
             gap: 8,
-            flexWrap: 'wrap',
-            justifyContent: 'center',
+            flexWrap: "wrap",
+            justifyContent: "center",
             marginBottom: 16,
           }}
         >
           {agent.specialties.map((specialty) => (
-            <Tag
-              key={specialty}
-              color="blue"
-              style={{
-                padding: '2px 8px',
-                borderRadius: 6,
-                fontSize: 12,
-              }}
-            >
+            <Tag key={specialty} color="blue" style={{ padding: "2px 8px" }}>
               {specialty}
             </Tag>
           ))}
         </div>
 
-        {/* Info list */}
-        <div style={{ width: '100%', marginBottom: 16 }}>
+        {/* Stats & Contact */}
+        <div style={{ width: "100%", marginBottom: 16 }}>
           {/* Experience */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 8,
-              fontSize: 14,
               marginBottom: 8,
+              fontSize: 14,
             }}
           >
-            <Award size={16} color="#888" />
+            <Award size={16} color="#666" />
             <span>{agent.yearsExperience} years experience</span>
           </div>
 
           {/* Email */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 8,
-              fontSize: 14,
               marginBottom: 8,
+              fontSize: 14,
             }}
           >
-            <Mail size={16} color="#888" />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <Mail size={16} color="#666" />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
               {agent.email}
             </span>
           </div>
@@ -112,29 +114,28 @@ export function AgentCard({ agent, onViewProfile }: AgentCardProps) {
           {/* Phone */}
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 8,
               fontSize: 14,
             }}
           >
-            <Phone size={16} color="#888" />
+            <Phone size={16} color="#666" />
             <span>{agent.phone}</span>
           </div>
         </div>
 
-        {/* View Profile Button */}
+        {/* Button */}
         <Button
           type="primary"
           block
-          onClick={() => onViewProfile?.(agent)}
+          onClick={handleViewProfile}
           style={{
-            borderRadius: 8,
             height: 40,
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
-          View Agent Website
+          View Profile
         </Button>
       </div>
     </Card>

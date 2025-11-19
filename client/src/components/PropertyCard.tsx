@@ -1,6 +1,5 @@
-import { Card, Tag } from "antd";
+import { Card, Image } from "antd";
 import { Bed, Bath, Maximize, MapPin } from "lucide-react";
-import { Image } from "antd";
 import type { Property } from "../data/mockData";
 
 interface PropertyCardProps {
@@ -8,23 +7,34 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat("en-US", {
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
     }).format(price);
+  };
 
-  const getStatusColor = (status: Property["status"]) => {
+  const getStatusStyles = (status: Property["status"]) => {
     switch (status) {
       case "For Sale":
-        return "processing";
+        return {
+          backgroundColor: "#1677ff",
+          color: "#fff",
+        };
       case "Pending":
-        return "warning";
+        return {
+          backgroundColor: "#faad14",
+          color: "#fff",
+        };
       case "Sold":
-        return "default";
+        return {
+          backgroundColor: "transparent",
+          border: "1px solid #d9d9d9",
+          color: "#595959",
+        };
       default:
-        return "default";
+        return {};
     }
   };
 
@@ -34,68 +44,57 @@ export function PropertyCard({ property }: PropertyCardProps) {
       style={{
         overflow: "hidden",
         borderRadius: 12,
-        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
       }}
       bodyStyle={{ padding: 0 }}
     >
-      {/* IMAGE */}
-      <div style={{ position: "relative", height: 260, width: "100%" }}>
+      {/* IMAGE SECTION */}
+      <div style={{ position: "relative", height: 260, overflow: "hidden" }}>
         <Image
           src={property.images[0]}
           alt={property.title}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
+          width="100%"
+          height="100%"
+          style={{ objectFit: "cover" }}
+          fallback="https://via.placeholder.com/600x400?text=No+Image"
+          preview={false}
         />
 
-        {/* STATUS TAG */}
-        <Tag
-          color={getStatusColor(property.status)}
+        {/* STATUS BADGE */}
+        <div
           style={{
             position: "absolute",
             top: 16,
             right: 16,
-            padding: "6px 10px",
-            fontSize: 13,
-            borderRadius: 8,
+            padding: "6px 12px",
+            borderRadius: 6,
+            fontSize: 12,
+            fontWeight: 600,
+            ...getStatusStyles(property.status),
           }}
         >
           {property.status}
-        </Tag>
+        </div>
       </div>
 
       {/* CONTENT */}
       <div style={{ padding: 24 }}>
         <div style={{ marginBottom: 16 }}>
-          <p style={{ color: "#1677ff", marginBottom: 6, fontWeight: 600 }}>
+          <p style={{ color: "#1677ff", marginBottom: 8, fontSize: 18, fontWeight: 600 }}>
             {formatPrice(property.price)}
           </p>
 
-          <h3 style={{ marginBottom: 6, fontSize: 18, fontWeight: 600 }}>
-            {property.title}
-          </h3>
+          <h3 style={{ marginBottom: 8, fontSize: 18 }}>{property.title}</h3>
 
-          <div style={{ display: "flex", gap: 8, color: "#888" }}>
-            <MapPin size={16} style={{ marginTop: 2 }} />
+          <div style={{ display: "flex", gap: 8, color: "#8c8c8c" }}>
+            <MapPin size={16} style={{ marginTop: 2, flexShrink: 0 }} />
             <p style={{ fontSize: 14 }}>
-              {property.address}, {property.city}, {property.state}{" "}
-              {property.zipCode}
+              {property.address}, {property.city}, {property.state} {property.zipCode}
             </p>
           </div>
         </div>
 
-        {/* SPECS */}
-        <div
-          style={{
-            display: "flex",
-            gap: 24,
-            color: "#888",
-            fontSize: 14,
-          }}
-        >
+        {/* FEATURES */}
+        <div style={{ display: "flex", gap: 24, color: "#8c8c8c", fontSize: 14 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Bed size={16} />
             <span>{property.bedrooms} Beds</span>
@@ -116,14 +115,14 @@ export function PropertyCard({ property }: PropertyCardProps) {
       {/* FOOTER */}
       <div
         style={{
-          padding: "14px 24px",
-          borderTop: "1px solid #f0f0f0",
+          padding: "12px 24px",
           background: "#fafafa",
+          borderTop: "1px solid #f0f0f0",
+          fontSize: 13,
+          color: "#8c8c8c",
         }}
       >
-        <p style={{ fontSize: 13, color: "#888" }}>
-          Listed: {new Date(property.listingDate).toLocaleDateString()}
-        </p>
+        Listed: {new Date(property.listingDate).toLocaleDateString()}
       </div>
     </Card>
   );
